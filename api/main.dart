@@ -1,11 +1,18 @@
 import 'dart:io';
 
+import 'package:api/src/env/env.dart';
+import 'package:api/src/repositories/message_repositories.dart';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:supabase/supabase.dart';
+
+late MessageRepository messageRepository;
 
 Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
-  // 1. Execute any custom code prior to starting the server...
+  final dbClient = SupabaseClient(
+    Env.SUPABASE_URL,
+    Env.SUPABASE_SERVICE_ROLE_KEY, // Use it only in the server, never on the client side.
+  );
 
-  // 2. Use the provided `handler`, `ip`, and `port` to create a custom `HttpServer`.
-  // Or use the Dart Frog serve method to do that for you.
+  messageRepository = MessageRepository(dbClient: dbClient);
   return serve(handler, ip, port);
 }
